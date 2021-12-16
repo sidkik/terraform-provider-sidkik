@@ -17,14 +17,17 @@ github.com/Masterminds/sprig
 # github.com/agext/levenshtein v1.2.2
 github.com/agext/levenshtein
 # github.com/apparentlymart/go-cidr v1.1.0
+## explicit
 github.com/apparentlymart/go-cidr/cidr
 # github.com/apparentlymart/go-textseg/v12 v12.0.0
 github.com/apparentlymart/go-textseg/v12/textseg
 # github.com/apparentlymart/go-textseg/v13 v13.0.0
 github.com/apparentlymart/go-textseg/v13/textseg
 # github.com/armon/go-radix v1.0.0
+## explicit
 github.com/armon/go-radix
 # github.com/aws/aws-sdk-go v1.37.0
+## explicit
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
 github.com/aws/aws-sdk-go/aws/awserr
@@ -227,6 +230,7 @@ github.com/hashicorp/hc-install/product
 github.com/hashicorp/hc-install/releases
 github.com/hashicorp/hc-install/src
 # github.com/hashicorp/hcl/v2 v2.8.2
+## explicit
 github.com/hashicorp/hcl/v2
 github.com/hashicorp/hcl/v2/ext/customdecode
 github.com/hashicorp/hcl/v2/hclsyntax
@@ -262,8 +266,6 @@ github.com/hashicorp/terraform-plugin-go/tftypes
 github.com/hashicorp/terraform-plugin-log/internal/logging
 github.com/hashicorp/terraform-plugin-log/tflog
 github.com/hashicorp/terraform-plugin-log/tfsdklog
-# github.com/hashicorp/terraform-plugin-sdk v1.17.2
-## explicit
 # github.com/hashicorp/terraform-plugin-sdk/v2 v2.10.0
 ## explicit
 github.com/hashicorp/terraform-plugin-sdk/v2/diag
@@ -324,6 +326,7 @@ github.com/mitchellh/reflectwalk
 # github.com/oklog/run v1.0.0
 github.com/oklog/run
 # github.com/posener/complete v1.2.1
+## explicit
 github.com/posener/complete
 github.com/posener/complete/cmd
 github.com/posener/complete/cmd/install
