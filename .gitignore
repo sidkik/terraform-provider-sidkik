@@ -20,3 +20,6 @@ terraform.tfstate
 terraform.tfstate.backup
 versions.tf
 .envrc
+firestore.rules
+
+storage.rules
