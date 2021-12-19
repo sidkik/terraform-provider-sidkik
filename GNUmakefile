@@ -13,6 +13,9 @@ test: fmtcheck generate
 testacc: fmtcheck generate
 	TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test $(TEST) -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/sidkik/terraform-provider-sidkik/version.ProviderVersion=acc"
 
+doc:
+	go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs
+
 fmt:
 	@echo "==> Fixing source code with gofmt..."
 	gofmt -w -s ./$(PKG_NAME)
@@ -30,7 +33,6 @@ tools:
 	@echo "==> installing required tooling..."
 	go install github.com/client9/misspell/cmd/misspell
 	go install github.com/golangci/golangci-lint/cmd/golangci-lint
-
 
 generate:
 	go generate  ./...
