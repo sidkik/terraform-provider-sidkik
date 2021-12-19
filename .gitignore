@@ -23,3 +23,4 @@ versions.tf
 firestore.rules
 
 storage.rules
+sidkik-entrepreneur-provision.json

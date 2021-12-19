@@ -131,19 +131,24 @@ type Config struct {
 
 	tokenSource oauth2.TokenSource
 
-	FirebaseRulesBasePath string
-
-	ComputeBasePath string
+	FirebaseRulesBasePath    string
+	IdentityPlatformBasePath string
+	MobileSDKBasePath        string
+	ComputeBasePath          string
 
 	requestBatcherServiceUsage *RequestBatcher
 	requestBatcherIam          *RequestBatcher
 }
 
 const FirebaseRulesBasePathKey = "FirebaseRules"
+const IdentityPlatformBasePathKey = "IdentityPlatform"
+const MobileSDKBasePathKey = "MobileSDK"
 
 // Generated product base paths
 var DefaultBasePaths = map[string]string{
-	FirebaseRulesBasePathKey: "https://firebaserules.googleapis.com/v1/",
+	FirebaseRulesBasePathKey:    "https://firebaserules.googleapis.com/v1/",
+	IdentityPlatformBasePathKey: "https://identitytoolkit.googleapis.com/admin/v2/",
+	MobileSDKBasePathKey:        "https://mobilesdk-pa.googleapis.com/v1/",
 }
 
 var DefaultClientScopes = []string{
@@ -439,4 +444,6 @@ func removeBasePathVersion(url string) string {
 // values to a default. After using this, you should call config.LoadAndValidate.
 func ConfigureBasePaths(c *Config) {
 	c.FirebaseRulesBasePath = DefaultBasePaths[FirebaseRulesBasePathKey]
+	c.MobileSDKBasePath = DefaultBasePaths[MobileSDKBasePathKey]
+	c.IdentityPlatformBasePath = DefaultBasePaths[IdentityPlatformBasePathKey]
 }

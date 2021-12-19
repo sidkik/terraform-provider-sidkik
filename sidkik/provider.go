@@ -123,6 +123,22 @@ func Provider() *schema.Provider {
 					"SIDKIK_FIREBASE_RULES_CUSTOM_ENDPOINT",
 				}, DefaultBasePaths[FirebaseRulesBasePathKey]),
 			},
+			"identity_platform_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"SIDKIK_IDENTITY_PLATFORM_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[IdentityPlatformBasePathKey]),
+			},
+			"mobile_sdk_custom_endpoint": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				ValidateFunc: validateCustomEndpoint,
+				DefaultFunc: schema.MultiEnvDefaultFunc([]string{
+					"SIDKIK_MOBILE_SDK_CUSTOM_ENDPOINT",
+				}, DefaultBasePaths[MobileSDKBasePathKey]),
+			},
 		},
 		ProviderMetaSchema: map[string]*schema.Schema{
 			"module_name": {
@@ -133,6 +149,7 @@ func Provider() *schema.Provider {
 		DataSourcesMap: map[string]*schema.Resource{
 			"sidkik_firebase_firestore_rule": dataSourceFirebaseFirestoreRule(),
 			"sidkik_firebase_storage_rule":   dataSourceFirebaseStorageRule(),
+			"sidkik_firebase_auth_config":    dataSourceFirebaseAuthConfig(),
 		},
 		ResourcesMap: resourceMap(),
 	}
@@ -147,6 +164,7 @@ func resourceMap() map[string]*schema.Resource {
 	return map[string]*schema.Resource{
 		"sidkik_firebase_firestore_rule": resourceFirebaseFirestoreRule(),
 		"sidkik_firebase_storage_rule":   resourceFirebaseStorageRule(),
+		"sidkik_firebase_auth_config":    resourceFirebaseAuthConfig(),
 	}
 }
 
@@ -224,8 +242,10 @@ func providerConfigure(ctx context.Context, d *schema.ResourceData, p *schema.Pr
 		config.Scopes[i] = scope.(string)
 	}
 
-	// Generated products
+	// products
 	config.FirebaseRulesBasePath = d.Get("firebase_rules_custom_endpoint").(string)
+	config.IdentityPlatformBasePath = d.Get("identity_platform_custom_endpoint").(string)
+	config.MobileSDKBasePath = d.Get("mobile_sdk_custom_endpoint").(string)
 
 	stopCtx, ok := schema.StopContext(ctx)
 	if !ok {
