@@ -91,6 +91,11 @@ func resourceFirebaseStorageRuleRead(d *schema.ResourceData, meta interface{}) e
 		return fmt.Errorf("Error reading FirebaseRules: %s", err)
 	}
 
+	if res["releases"] == nil {
+		log.Printf("[INFO] No releases yet: %#v", d)
+		return nil
+	}
+
 	releases := res["releases"].([]interface{})
 
 	if err := d.Set("name", flattenFirebaseRuleName(releases, "firebase.storage", d, config)); err != nil {
@@ -210,7 +215,25 @@ func resourceFirebaseStorageRuleCreate(d *schema.ResourceData, meta interface{})
 	log.Printf("[DEBUG] release obj: %v", releaseObj)
 	_, err = sendRequestWithTimeout(config, "PATCH", project, urlRelease, userAgent, releaseObj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating Firebase Release: %s", err)
+		// release doesn't exist - try to create
+		if strings.Contains(err.Error(), "404") {
+			urlCreateRelease, err := replaceVars(d, config, "{{FirebaseRulesBasePath}}projects/{{project}}/releases")
+			if err != nil {
+				return err
+			}
+			releasePostObj := make(map[string]interface{})
+			releaseName, err := replaceVars(d, config, "projects/{{project}}/releases/firebase.storage/{{project}}.appspot.com")
+			releasePostObj["name"] = releaseName
+			releasePostObj["ruleName"] = res["name"].(string)
+			releasePostObj, err = resourceFirebaseReleasePostEncoder(d, meta, releasePostObj)
+			if err != nil {
+				log.Printf("[ERROR] Cannot convert release to encoded obj: %v", err)
+				return err
+			}
+			sendRequestWithTimeout(config, "POST", project, urlCreateRelease, userAgent, releasePostObj, d.Timeout(schema.TimeoutCreate))
+		} else {
+			return fmt.Errorf("Error creating Firebase Release: %s", err)
+		}
 	}
 
 	log.Printf("[DEBUG] Finished release with new Firebase Rule: %#v", d)
@@ -288,4 +311,12 @@ func resourceFirebaseReleasePatchEncoder(d *schema.ResourceData, meta interface{
 	wrapper["release"] = release
 
 	return wrapper, nil
+}
+
+func resourceFirebaseReleasePostEncoder(d *schema.ResourceData, meta interface{}, obj map[string]interface{}) (map[string]interface{}, error) {
+	release := make(map[string]interface{})
+	release["name"] = obj["name"]
+	release["rulesetName"] = obj["ruleName"]
+
+	return release, nil
 }

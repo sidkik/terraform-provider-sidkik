@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"reflect"
+	"strings"
 	"time"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -71,7 +72,7 @@ func resourceFirebaseFirestoreRuleRead(d *schema.ResourceData, meta interface{})
 		return fmt.Errorf("Error fetching project for FirebaseRules: %s", err)
 	}
 
-	// grab the existing rules - there are rules by default when the firebase account is created
+	// grab the existing rules
 	res, err := sendRequest(config, "GET", project, urlReleases, userAgent, nil)
 
 	if err != nil {
@@ -80,6 +81,11 @@ func resourceFirebaseFirestoreRuleRead(d *schema.ResourceData, meta interface{})
 
 	if err := d.Set("project", project); err != nil {
 		return fmt.Errorf("Error reading FirebaseRules: %s", err)
+	}
+
+	if res["releases"] == nil {
+		log.Printf("[INFO] No releases yet: %#v", d)
+		return nil
 	}
 
 	ruleSets := res["releases"].([]interface{})
@@ -141,6 +147,7 @@ func resourceFirebaseFirestoreRuleDelete(d *schema.ResourceData, meta interface{
 }
 
 func resourceFirebaseFirestoreRuleCreate(d *schema.ResourceData, meta interface{}) error {
+	log.Printf("[DEBUG] Starting Firestore Rule Create: %#v", d)
 	config := meta.(*Config)
 	userAgent, err := generateUserAgentString(d, config.userAgent)
 	if err != nil {
@@ -204,7 +211,26 @@ func resourceFirebaseFirestoreRuleCreate(d *schema.ResourceData, meta interface{
 	log.Printf("[DEBUG] release obj: %v", releaseObj)
 	_, err = sendRequestWithTimeout(config, "PATCH", project, urlRelease, userAgent, releaseObj, d.Timeout(schema.TimeoutCreate))
 	if err != nil {
-		return fmt.Errorf("Error creating Firebase Release: %s", err)
+		// release doesn't exist - try to create
+		if strings.Contains(err.Error(), "404") {
+			urlCreateRelease, err := replaceVars(d, config, "{{FirebaseRulesBasePath}}projects/{{project}}/releases")
+			if err != nil {
+				return err
+			}
+			releasePostObj := make(map[string]interface{})
+			releaseName, err := replaceVars(d, config, "projects/{{project}}/releases/cloud.firestore")
+			releasePostObj["name"] = releaseName
+			releasePostObj["ruleName"] = res["name"].(string)
+			releasePostObj, err = resourceFirebaseReleasePostEncoder(d, meta, releasePostObj)
+			if err != nil {
+				log.Printf("[ERROR] Cannot convert release to encoded obj: %v", err)
+				return err
+			}
+			sendRequestWithTimeout(config, "POST", project, urlCreateRelease, userAgent, releasePostObj, d.Timeout(schema.TimeoutCreate))
+		} else {
+			return fmt.Errorf("Error creating Firebase Release: %s", err)
+		}
+
 	}
 
 	log.Printf("[DEBUG] Finished release with new Firebase Rule: %#v", d)

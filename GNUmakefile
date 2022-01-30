@@ -1,6 +1,6 @@
 TEST?=$$(go list ./... | grep -v github.com/sidkik/terraform-provider-sidkik/scripts)
 WEBSITE_REPO=github.com/hashicorp/terraform-website
-PKG_NAME=google
+PKG_NAME=sidkik
 
 default: build
 
@@ -11,7 +11,7 @@ test: fmtcheck generate
 	go test $(TESTARGS) -timeout=30s $(TEST)
 
 testacc: fmtcheck generate
-	TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test $(TEST) -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/sidkik/terraform-provider-sidkik/version.ProviderVersion=acc"
+	TF_LOG=TRACE TF_ACC=1 TF_SCHEMA_PANIC_ON_ERROR=1 go test $(TEST) -v $(TESTARGS) -timeout 240m -ldflags="-X=github.com/sidkik/terraform-provider-sidkik/version.ProviderVersion=acc"
 
 doc:
 	go run github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs

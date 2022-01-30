@@ -8,6 +8,8 @@ It also handles basic configuration of email auth and authorized domains. You mu
 
 > Note: Unable to find a programatic way to enable the firebase auth or identity platform. The mobile sdk is not available except internally to google.
 
+The project is linked to the terraform registry and will add a new version when it is tagged
+
 ## Update Docs
 
 ## Local Dev

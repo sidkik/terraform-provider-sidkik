@@ -90,8 +90,6 @@ func resourceFirebaseAuthConfigRead(d *schema.ResourceData, meta interface{}) er
 	// grab the existing config - there are rules by default when the firebase account is created
 	res, err := sendRequest(config, "GET", project, url, userAgent, nil)
 
-	fmt.Println("Config ___________________", res, err)
-
 	if err != nil {
 		return handleNotFoundError(err, d, fmt.Sprintf("AuthConfig %q", d.Id()))
 	}
