@@ -16,7 +16,7 @@ require (
 	github.com/mitchellh/go-homedir v1.1.0
 	github.com/posener/complete v1.2.1 // indirect
 	github.com/sirupsen/logrus v1.8.1
-	golang.org/x/oauth2 v0.0.0-20211104180415-d3ed0bb246c8
-	google.golang.org/api v0.63.0
-	google.golang.org/grpc v1.43.0
+	golang.org/x/oauth2 v0.4.0
+	google.golang.org/api v0.103.0
+	google.golang.org/grpc v1.53.0
 )
